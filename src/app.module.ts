@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
@@ -17,6 +19,15 @@ import { UserModule } from './modules/user/user.module';
       logging: true, // 开启日志
       synchronize: true, // 开启数据库同步功能
       autoLoadEntities: true, // 自动加载实体类
+    }),
+    // 导入GraphQLModule，用于在NestJS中集成GraphQL
+    // 使用forRoot方法创建一个根级别的GraphQL模块，并传入一个对象作为参数
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      // 指定使用的驱动程序为ApolloDriver，它是一个用于与GraphQL服务器通信的库
+      driver: ApolloDriver,
+
+      // 自动生成GraphQL模式文件，如果为false则手动指定模式文件路径
+      autoSchemaFile: true,
     }),
     UserModule,
   ],
