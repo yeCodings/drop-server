@@ -27,7 +27,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       driver: ApolloDriver,
 
       // 自动生成GraphQL模式文件，如果为false则手动指定模式文件路径
-      autoSchemaFile: true,
+      autoSchemaFile: './schema.gql',
     }),
     UserModule,
   ],
