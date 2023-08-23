@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { OSSModule } from './modules/OSS/oss.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       autoSchemaFile: './schema.gql',
     }),
     UserModule,
+    OSSModule,
   ],
   controllers: [AppController],
   providers: [AppService],
