@@ -15,8 +15,8 @@ export class OSSService {
   async getSignature(): Promise<OSSType> {
     // 定义一个配置对象，包含OSS的访问密钥、存储桶
     const config = {
-      accessKeyId: 'LTAI5t78Hr7aYDbc2gicYwKA', // 是用于标识用户身份的密钥ID
-      accessKeySecret: 'qb1b30jDHJF5SfJxzgGZpZhttwhXLq', // 是对应的密钥密码，用于验证用户身份
+      accessKeyId: 'yourKey', // 是用于标识用户身份的密钥ID
+      accessKeySecret: 'yourSecret', // 是对应的密钥密码，用于验证用户身份
       bucket: 'drop-server-assets', // bucket是用户在OSS上创建的存储空间，这里命名为'drop-server-assets'
       dir: 'images /', // dir是存储路径，这里设置为'images/'，即上传的文件将被存储在以'images/'为前缀的路径下
     };
