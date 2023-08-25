@@ -1,6 +1,6 @@
 import * as dayjs from 'dayjs';
-import { Injectable } from '@nestjs/common';
 import * as OSS from 'ali-oss';
+import { Injectable } from '@nestjs/common';
 import { OSSType } from './dto/oss.type';
 
 /**
@@ -11,7 +11,12 @@ import { OSSType } from './dto/oss.type';
  */
 @Injectable()
 export class OSSService {
-  // 获取OSS签名等信息
+  /**
+   * @description 获取 OSS 上传签名
+   * @see https://help.aliyun.com/document_detail/31926.html
+   * @return {*}  {Promise<OSSType>}
+   * @memberof OSSService
+   */
   async getSignature(): Promise<OSSType> {
     // 定义一个配置对象，包含OSS的访问密钥、存储桶
     const config = {
@@ -36,6 +41,11 @@ export class OSSService {
       ],
     };
 
+    //bucket域名
+    const host = `http://${config.bucket}.${
+      (await client.getBucketLocation()).location
+    }.aliyuncs.com`.toString();
+
     //签名
     const formData = await client.calculatePostSignature(policy);
 
@@ -45,6 +55,7 @@ export class OSSService {
       policy: formData.policy, // 策略
       signature: formData.Signature, // 签名
       accessId: formData.OSSAccessKeyId, // KEY
+      host,
     };
 
     return params;

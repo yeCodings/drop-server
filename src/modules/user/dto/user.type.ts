@@ -13,4 +13,7 @@ export class UserType {
 
   @Field({ description: '账户信息' })
   account: string;
+
+  // @Field({ description: '用户头像' })
+  // avatar?: string;
 }

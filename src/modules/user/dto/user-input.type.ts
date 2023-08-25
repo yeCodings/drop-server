@@ -4,9 +4,12 @@ import { Field, InputType } from '@nestjs/graphql';
 @InputType()
 export class UserInput {
   // 使用Field装饰器，表示下面的属性将作为GraphQL查询中的字段
-  @Field()
+  @Field({ description: '名称' })
   name: string;
 
-  @Field()
+  @Field({ description: '简介' })
   desc: string;
+
+  // @Field({ description: '头像 ' })
+  // avatar: string;
 }

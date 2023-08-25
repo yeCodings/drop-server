@@ -31,7 +31,7 @@ export class User {
   password: string;
 
   @Column({
-    comment: '',
+    comment: '账户信息',
     nullable: true,
   })
   account: string;
