@@ -16,7 +16,4 @@ export class OSSType {
 
   @Field({ description: 'host' })
   host: string;
-
-  // @Field({ description: '文件夹' })
-  // dir: string;
 }

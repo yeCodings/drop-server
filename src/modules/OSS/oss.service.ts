@@ -2,6 +2,7 @@ import * as dayjs from 'dayjs';
 import * as OSS from 'ali-oss';
 import { Injectable } from '@nestjs/common';
 import { OSSType } from './dto/oss.type';
+import { ACCESS_KEY_ID, ACCESS_KEY_SECRET } from 'src/common/constants/aliyun';
 
 /**
  * 注册 OSSService服务
@@ -20,8 +21,8 @@ export class OSSService {
   async getSignature(): Promise<OSSType> {
     // 定义一个配置对象，包含OSS的访问密钥、存储桶
     const config = {
-      accessKeyId: 'yourKey', // 是用于标识用户身份的密钥ID
-      accessKeySecret: 'yourSecret', // 是对应的密钥密码，用于验证用户身份
+      accessKeyId: ACCESS_KEY_ID, // 是用于标识用户身份的密钥ID
+      accessKeySecret: ACCESS_KEY_SECRET, // 是对应的密钥密码，用于验证用户身份
       bucket: 'drop-server-assets', // bucket是用户在OSS上创建的存储空间，这里命名为'drop-server-assets'
       dir: 'images /', // dir是存储路径，这里设置为'images/'，即上传的文件将被存储在以'images/'为前缀的路径下
     };
