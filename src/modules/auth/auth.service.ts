@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
-import * as $OpenApi from '@alicloud/openapi-client';
-import Util, * as $Util from '@alicloud/tea-util';
+import Util, * as utils from '@alicloud/tea-util';
+import * as Dysmsapi from '@alicloud/dysmsapi20170525';
 import { getRandomCode } from 'src/shared/utils';
-import {
-  ACCESS_KEY_ID,
-  ACCESS_KEY_SECRET,
-  SIGN_NAME,
-  TEMPLATE_CODE,
-} from 'src/common/constants/aliyun';
+import { SIGN_NAME, TEMPLATE_CODE } from 'src/common/constants/aliyun';
+import { UserService } from '../user/user.service';
+import { msgClient } from 'src/shared/utils/msg';
+import * as dayjs from 'dayjs';
 
 /**
  * 注册 AuthService服务
@@ -18,38 +15,50 @@ import {
  */
 @Injectable()
 export class AuthService {
-  /**
-   * 发送短信验证码
-   *
-   * @param {string} tel
-   * @return {*}
-   * @memberof AuthService
-   */
-  async sendCodeMsg(tel: string): Promise<string> {
+  constructor(private readonly userService: UserService) {}
+
+  // 发送短信验证码
+  async sendCodeMsg(tel: string): Promise<boolean> {
+    const user = await this.userService.findByTel(tel);
+
+    if (user) {
+      const diffTime = dayjs().diff(dayjs(user.codeCreateTimeAt));
+      if (diffTime < 60 * 1000) return false;
+    }
+
     const code = getRandomCode();
-    console.log(' tel', tel, code);
-
-    const config = new $OpenApi.Config({
-      accessKeyId: ACCESS_KEY_ID,
-      accessKeySecret: ACCESS_KEY_SECRET,
-    });
-    config.endpoint = 'dysmsapi.aliyuncs.com';
-
-    const client = new Dysmsapi20170525(config);
-    const sendSmsRequest = new $Dysmsapi20170525.SendSmsRequest({
+    const sendSmsRequest = new Dysmsapi.SendSmsRequest({
       signName: SIGN_NAME,
       templateCode: TEMPLATE_CODE,
       phoneNumbers: tel,
       templateParam: `{\"code\": \"${code}\"}`,
     });
-    const runtime = new $Util.RuntimeOptions({});
+    const runtime = new utils.RuntimeOptions({});
     try {
       // 复制代码运行请自行打印 API 的返回值
-      await client.sendSmsWithOptions(sendSmsRequest, runtime);
+      await msgClient.sendSmsWithOptions(sendSmsRequest, runtime);
+
+      if (user) {
+        const result = await this.userService.updateCode(user.id, code);
+        if (result) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      const result = await this.userService.create({
+        tel,
+        code,
+        codeCreateTimeAt: new Date(),
+      });
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       // 如有需要，请打印 error
       Util.assertAsString(error.message);
     }
-    return code;
   }
 }

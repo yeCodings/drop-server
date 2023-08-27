@@ -52,7 +52,10 @@ type Mutation {
   del(id: String!): Boolean!
 
   """发送短信验证码"""
-  sendCodeMsg(tel: String!): String!
+  sendCodeMsg(tel: String!): Boolean!
+
+  """登录"""
+  login(tel: String!, code: String!): Boolean!
 }
 
 input UserInput {
