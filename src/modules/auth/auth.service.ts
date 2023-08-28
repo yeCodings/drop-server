@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import Util, * as utils from '@alicloud/tea-util';
 import * as Dysmsapi from '@alicloud/dysmsapi20170525';
-import { getRandomCode } from 'src/shared/utils';
-import { SIGN_NAME, TEMPLATE_CODE } from 'src/common/constants/aliyun';
+import { getRandomCode } from '@/shared/utils';
+import { SIGN_NAME, TEMPLATE_CODE } from '@/common/constants/aliyun';
 import { UserService } from '../user/user.service';
-import { msgClient } from 'src/shared/utils/msg';
+import { msgClient } from '@/shared/utils/msg';
 import * as dayjs from 'dayjs';
+import { Result } from '@/common/dto/result.type';
+import {
+  CODE_NOT_EXPIRE,
+  SUCCESS,
+  UPDATE_ERROR,
+} from '@/common/constants/code';
 
 /**
  * 注册 AuthService服务
@@ -18,12 +24,16 @@ export class AuthService {
   constructor(private readonly userService: UserService) {}
 
   // 发送短信验证码
-  async sendCodeMsg(tel: string): Promise<boolean> {
+  async sendCodeMsg(tel: string): Promise<Result> {
     const user = await this.userService.findByTel(tel);
 
     if (user) {
       const diffTime = dayjs().diff(dayjs(user.codeCreateTimeAt));
-      if (diffTime < 60 * 1000) return false;
+      if (diffTime < 60 * 1000)
+        return {
+          code: CODE_NOT_EXPIRE,
+          message: 'code 尚未过期',
+        };
     }
 
     const code = getRandomCode();
@@ -41,9 +51,15 @@ export class AuthService {
       if (user) {
         const result = await this.userService.updateCode(user.id, code);
         if (result) {
-          return true;
+          return {
+            code: SUCCESS,
+            message: '获取验证码成功',
+          };
         } else {
-          return false;
+          return {
+            code: UPDATE_ERROR,
+            message: '获取验证码失败',
+          };
         }
       }
       const result = await this.userService.create({
@@ -52,9 +68,15 @@ export class AuthService {
         codeCreateTimeAt: new Date(),
       });
       if (result) {
-        return true;
+        return {
+          code: SUCCESS,
+          message: '新建账号成功',
+        };
       } else {
-        return false;
+        return {
+          code: UPDATE_ERROR,
+          message: '新建账号失败',
+        };
       }
     } catch (error) {
       // 如有需要，请打印 error

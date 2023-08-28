@@ -2,7 +2,7 @@ import * as dayjs from 'dayjs';
 import * as OSS from 'ali-oss';
 import { Injectable } from '@nestjs/common';
 import { OSSType } from './dto/oss.type';
-import { ACCESS_KEY_ID, ACCESS_KEY_SECRET } from 'src/common/constants/aliyun';
+import { ACCESS_KEY_ID, ACCESS_KEY_SECRET } from '@/common/constants/aliyun';
 
 /**
  * 注册 OSSService服务
