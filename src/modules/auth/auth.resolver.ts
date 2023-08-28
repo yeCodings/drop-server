@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import * as dayjs from 'dayjs';
 import { Result } from '@/common/dto/result.type';
+import { JwtService } from '@nestjs/jwt';
 import {
   ACCOUNT_NOT_EXIST,
   CODE_NOT_EXIST,
@@ -16,6 +17,7 @@ export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Mutation(() => Result, { description: '发送短信验证码' })
@@ -52,11 +54,16 @@ export class AuthResolver {
       };
 
     // 用户存在 且 验证码✅
-    if (user.code === code)
+    if (user.code === code) {
+      const token = this.jwtService.sign({
+        id: user.id,
+      });
       return {
         code: SUCCESS,
         message: '登录成功',
+        data: token,
       };
+    }
 
     // 除此之外都返回false
     return {
