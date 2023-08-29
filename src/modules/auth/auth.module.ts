@@ -14,7 +14,7 @@ import { JWT_SECRET } from '@/common/constants/aliyun';
     JwtModule.register({
       secret: JWT_SECRET, // 秘钥
       signOptions: {
-        expiresIn: '6000s', // 过期时间
+        expiresIn: 60 * 60 * 24 * 7 + 's', // 过期时间
       },
     }),
     TypeOrmModule.forFeature([User]),

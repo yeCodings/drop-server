@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { UserInput } from './dto/user-input.type';
 import { UserType } from './dto/user.type';
@@ -14,6 +14,13 @@ export class UserResolver {
 
   @Query(() => UserType, { description: '根据ID查询用户' })
   async find(@Args('id') id: string): Promise<UserType> {
+    return await this.userService.find(id);
+  }
+
+  @Query(() => UserType, { description: '根据ID获取用户信息' })
+  async getUserInfo(@Context() ctx: any): Promise<UserType> {
+    // user?.id 避免未能及时获取到 id
+    const id = ctx.req.user?.id;
     return await this.userService.find(id);
   }
 

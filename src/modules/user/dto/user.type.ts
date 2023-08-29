@@ -13,4 +13,7 @@ export class UserType {
 
   @Field({ description: '账户信息' })
   account: string;
+
+  @Field({ description: 'tel' })
+  tel: string;
 }
